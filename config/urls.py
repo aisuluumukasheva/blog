@@ -16,9 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
+from django.views.generic import TemplateView
+
+from django.conf import settings
+from django.conf.urls.static import static
 
 from main.views import post_list, create_post, update_post, delete_post, filter_by_user,search,toggle_like
-from reviews.views import CommentViewSet
+from reviews.views import CommentViewSet, post_comment
 
 router = DefaultRouter()
 router.register('comments', CommentViewSet)
@@ -50,4 +54,7 @@ urlpatterns = [
     path('post-search/',search),
     path('post-like/', toggle_like),
     path('', include(router.urls)),
+    path('post_comment/<int:pk>', post_comment)
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,12 +1,13 @@
 from rest_framework.viewsets import ModelViewSet
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render, redirect
 
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 
 from .models import Comment, LikeComment
 from .serializers import CommentSerializer
+from .forms import ReplyForm
 
 User = get_user_model()
 
@@ -32,3 +33,17 @@ class CommentViewSet(ModelViewSet):
             LikeComment.objects.create(author = author, comment = comment)
             # создаем
         return Response(status=201)
+
+@api_view(['POST'])
+def post_comment(request,pk):
+    comment = Comment.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.comment = comment
+            reply.save()
+            return redirect('success')
+    else:
+        form = ReplyForm()
+    return render(request, 'post_comment.html', {'form': form})

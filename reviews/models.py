@@ -20,4 +20,8 @@ class LikeComment(models.Model):
     author = models.ForeignKey(User, related_name='comment_likes', on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, related_name='likes', on_delete=models.CASCADE)
 
+class Reply(models.Model):
+    reply_to_comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    text = models.TextField()
+
 
